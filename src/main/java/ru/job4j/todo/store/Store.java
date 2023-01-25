@@ -8,7 +8,7 @@ public interface Store {
 
     Task add(Task item);
 
-    boolean replace(int id, Task item);
+    boolean update(Task item);
 
     boolean delete(int id);
 

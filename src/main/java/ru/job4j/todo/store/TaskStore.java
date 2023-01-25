@@ -14,9 +14,9 @@ import java.util.List;
 
 @Repository
 @AllArgsConstructor
-public class TaskRepository implements Store {
+public class TaskStore implements Store {
 
-    public static final Logger LOG = LoggerFactory.getLogger(TaskRepository.class.getName());
+    public static final Logger LOG = LoggerFactory.getLogger(TaskStore.class.getName());
     private static final String REPLACE_TASK =
             "UPDATE tasks "
                     + "SET description = :fDescription, created = :fCreated, done = :fDone "
@@ -43,13 +43,13 @@ public class TaskRepository implements Store {
     }
 
     @Override
-    public boolean replace(int id, Task task) {
+    public boolean update(Task task) {
         boolean rls = false;
         Session session = sf.openSession();
         try {
             session.beginTransaction();
             session.createQuery(REPLACE_TASK)
-                    .setParameter("fId", id)
+                    .setParameter("fId", task.getId())
                     .setParameter("fDescription", task.getDescription())
                     .setParameter("fCreated", Timestamp.valueOf(task.getCreated()))
                     .setParameter("fDone", task.isDone())
