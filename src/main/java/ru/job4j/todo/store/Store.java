@@ -15,4 +15,6 @@ public interface Store {
     List<Task> findAll();
 
     Task findById(int id);
+
+    List<Task> findByDone(boolean done);
 }

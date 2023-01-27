@@ -29,11 +29,14 @@ public class TaskService {
     }
 
     public Collection<Task> findAll() {
-        List<Task> posts = taskStore.findAll();
-        return posts;
+        return taskStore.findAll();
     }
 
     public Task findById(int id) {
         return taskStore.findById(id);
+    }
+
+    public Collection<Task> findByDone(boolean done) {
+        return taskStore.findByDone(done);
     }
 }

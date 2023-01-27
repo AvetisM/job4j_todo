@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
@@ -18,13 +17,13 @@ public class TaskStore implements Store {
 
     public static final Logger LOG = LoggerFactory.getLogger(TaskStore.class.getName());
     private static final String REPLACE_TASK =
-            "UPDATE tasks "
-                    + "SET description = :fDescription, created = :fCreated, done = :fDone "
+            "UPDATE Task "
+                    + "SET description = :fDescription, done = :fDone "
                     + "WHERE id = :fId";
-    private static final String DELETE_TASK = "DELETE Item WHERE id = :fId";
+    private static final String DELETE_TASK = "DELETE Task WHERE id = :fId";
     private static final String FIND_ALL_TASKS = "FROM Task";
     private static final String FIND_TASK_BY_ID = "FROM Task as t WHERE t.id = :fId";
-
+    private static final String FIND_TASK_BY_DONE = "FROM Task as t WHERE t.done = :fDone";
     private final SessionFactory sf;
 
     @Override
@@ -51,7 +50,6 @@ public class TaskStore implements Store {
             session.createQuery(REPLACE_TASK)
                     .setParameter("fId", task.getId())
                     .setParameter("fDescription", task.getDescription())
-                    .setParameter("fCreated", Timestamp.valueOf(task.getCreated()))
                     .setParameter("fDone", task.isDone())
                     .executeUpdate();
             session.getTransaction().commit();
@@ -101,4 +99,15 @@ public class TaskStore implements Store {
         session.close();
         return rls;
     }
+
+    @Override
+    public List<Task> findByDone(boolean done) {
+        Session session = sf.openSession();
+        Query<Task> query = session.createQuery(FIND_TASK_BY_DONE, Task.class);
+        query.setParameter("fDone", done);
+        List<Task> rls = query.list();
+        session.close();
+        return rls;
+    }
+
 }
