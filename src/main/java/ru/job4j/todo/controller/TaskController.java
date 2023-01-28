@@ -1,71 +1,83 @@
 package ru.job4j.todo.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.TaskService;
+import ru.job4j.todo.service.TaskDBService;
+
+import java.util.Optional;
 
 @Controller
+@AllArgsConstructor
+@RequestMapping("/tasks")
 public class TaskController {
 
-    private final TaskService taskService;
+    private final TaskDBService taskDBService;
 
-    TaskController(TaskService taskService) {
-        this.taskService = taskService;
-    }
-
-    @GetMapping("/tasks")
+    @GetMapping("")
     public String tasks(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
-        return "tasks";
+        model.addAttribute("tasks", taskDBService.findAll());
+        return "Task/tasks";
     }
 
-    @GetMapping("/tasks/{done}")
+    @GetMapping("/{done}")
     public String tasksDone(Model model, @PathVariable("done") boolean done) {
-        model.addAttribute("tasks", taskService.findByDone(done));
-        return "tasks";
+        model.addAttribute("tasks", taskDBService.findByDone(done));
+        return "Task/tasks";
     }
 
-    @GetMapping("/formAddTask")
-    public String formAddTask(Model model) {
-        return "addTask";
+    @GetMapping("/formAdd")
+    public String formAdd(Model model) {
+        return "Task/add";
     }
 
-    @GetMapping("/formDetailTask/{taskId}")
-    public String formDetailTask(Model model, @PathVariable("taskId") int id) {
-        model.addAttribute("task", taskService.findById(id));
-        return "detailTask";
+    @GetMapping("/formDetail/{id}")
+    public String formDetail(Model model, @PathVariable("id") int id) {
+        Optional<Task> task = taskDBService.findById(id);
+        if (task.isEmpty()) {
+            model.addAttribute("message", "Не удалось найти задачу.");
+            return "errorPage";
+        }
+        model.addAttribute("task", task.get());
+        return "Task/detail";
     }
 
-    @PostMapping("/createTask")
-    public String createTask(@ModelAttribute Task task) {
-        taskService.add(task);
+    @PostMapping("/create")
+    public String create(@ModelAttribute Task task) {
+        taskDBService.add(task);
         return "redirect:/tasks";
     }
 
-    @GetMapping("/formUpdateTask/{taskId}")
-    public String formUpdateTask(Model model, @PathVariable("taskId") int id) {
-        model.addAttribute("task", taskService.findById(id));
-        return "updateTask";
-    }
-
-    @PostMapping("/updateTask")
-    public String updateTask(@ModelAttribute Task task) {
-        taskService.update(task);
+    @PostMapping("/update")
+    public String update(Model model, @ModelAttribute Task task) {
+        boolean rls = taskDBService.update(task);
+        if (!rls) {
+            model.addAttribute("message", "Не удалось обновить задачу.");
+            return "errorPage";
+        }
         return "redirect:/tasks";
     }
 
-    @PostMapping("/executeTask")
-    public String executeTask(@ModelAttribute Task task) {
+    @PostMapping("/complete")
+    public String complete(Model model, @ModelAttribute Task task) {
         task.setDone(true);
-        taskService.update(task);
+        boolean rls = taskDBService.complete(task.getId());
+        if (!rls) {
+            model.addAttribute("message", "Не удалось сделать задачу выполненной.");
+            return "errorPage";
+        }
         return "redirect:/tasks";
     }
 
-    @PostMapping("/deleteTask")
-    public String deleteTask(@ModelAttribute Task task) {
-        taskService.delete(task);
+    @PostMapping("/delete")
+    public String delete(Model model, @ModelAttribute Task task) {
+        boolean rls = taskDBService.delete(task);
+        if (!rls) {
+            model.addAttribute("message", "Не удалось удалить задачу.");
+            return "errorPage";
+        }
         return "redirect:/tasks";
     }
 

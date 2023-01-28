@@ -36,7 +36,7 @@
         Новая задача.
       </div>
       <div class="card-body">
-        <form th:action="@{/createTask}" method="POST">
+        <form th:action="@{/tasks/create}" method="POST">
           <div class="form-group">
             <label for="description">Описание</label>
             <input type="text" class="form-control" name="description" id="description">

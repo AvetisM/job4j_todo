@@ -9,16 +9,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
-public class TaskStore implements Store {
+public class TaskDBStore implements Store {
 
-    public static final Logger LOG = LoggerFactory.getLogger(TaskStore.class.getName());
+    public static final Logger LOG = LoggerFactory.getLogger(TaskDBStore.class.getName());
     private static final String REPLACE_TASK =
             "UPDATE Task "
                     + "SET description = :fDescription, done = :fDone "
+                    + "WHERE id = :fId";
+    private static final String COMPLETE_TASK =
+            "UPDATE Task "
+                    + "SET done = true "
                     + "WHERE id = :fId";
     private static final String DELETE_TASK = "DELETE Task WHERE id = :fId";
     private static final String FIND_ALL_TASKS = "FROM Task";
@@ -36,8 +42,9 @@ public class TaskStore implements Store {
         } catch (Exception e) {
             session.getTransaction().rollback();
             LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
         }
-        session.close();
         return task;
     }
 
@@ -57,8 +64,10 @@ public class TaskStore implements Store {
         } catch (Exception e) {
             session.getTransaction().rollback();
             LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
         }
-        session.close();
+
         return rls;
     }
 
@@ -76,37 +85,78 @@ public class TaskStore implements Store {
         } catch (Exception e) {
             session.getTransaction().rollback();
             LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
         }
-        session.close();
+
         return rls;
     }
 
     @Override
     public List<Task> findAll() {
         Session session = sf.openSession();
-        Query<Task> query = session.createQuery(FIND_ALL_TASKS, Task.class);
-        List<Task> rls = query.list();
-        session.close();
+        List<Task> rls = new ArrayList<>();
+        try {
+
+            Query<Task> query = session.createQuery(FIND_ALL_TASKS, Task.class);
+            rls = query.list();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
+        }
         return rls;
     }
 
     @Override
-    public Task findById(int id) {
+    public Optional<Task> findById(int id) {
+        Optional rls = Optional.empty();
         Session session = sf.openSession();
-        Query<Task> query = session.createQuery(FIND_TASK_BY_ID, Task.class);
-        query.setParameter("fId", id);
-        Task rls = query.uniqueResult();
-        session.close();
+        try {
+            Query<Task> query = session.createQuery(FIND_TASK_BY_ID, Task.class);
+            query.setParameter("fId", id);
+            rls = Optional.of(query.uniqueResult());
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
+        }
         return rls;
     }
 
     @Override
     public List<Task> findByDone(boolean done) {
         Session session = sf.openSession();
-        Query<Task> query = session.createQuery(FIND_TASK_BY_DONE, Task.class);
-        query.setParameter("fDone", done);
-        List<Task> rls = query.list();
-        session.close();
+        List<Task> rls = new ArrayList<>();
+        try {
+            Query<Task> query = session.createQuery(FIND_TASK_BY_DONE, Task.class);
+            query.setParameter("fDone", done);
+            rls = query.list();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
+        }
+        return rls;
+    }
+
+    @Override
+    public boolean complete(int id) {
+        boolean rls = false;
+        Session session = sf.openSession();
+        try {
+            session.beginTransaction();
+            session.createQuery(COMPLETE_TASK)
+                    .setParameter("fId", id)
+                    .executeUpdate();
+            session.getTransaction().commit();
+            rls = true;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            LOG.error(e.getMessage(), e);
+        } finally {
+            session.close();
+        }
         return rls;
     }
 

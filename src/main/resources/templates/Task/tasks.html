@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <!-- Required meta tags -->
@@ -14,7 +14,7 @@
           integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
           integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <title>todo</title>
 </head>
 <body>
@@ -30,40 +30,53 @@
       </div>
     </div>
   </nav>
-  <div class="row pt-3">
-    <div class="card" style="width: 100%">
-      <div class="card-header">
-        Подробная информация.
-      </div>
-      <div class="card-body">
-        <form th:action="@{/updateTask}" method="POST" th:object="${task}">
-          <input type="hidden" name="id" th:field="*{id}"/>
-          <div class="input-group mb-3">
-            <label for="description">Описание</label>
-            <input type="text" class="form-control" name="description" id="description" th:field="*{description}">
-            <button type="submit" class="btn btn-secondary">Отредактировать</button>
-          </div>
-        </form>
-        <div class="btn-group">
-            <form th:action="@{/executeTask}" method="POST" th:object="${task}">
-              <input type="hidden" name="id" th:field="*{id}"/>
-              <input type="hidden" class="form-control" name="description" id="descriptionDone" th:field="*{description}">
-              <button type="submit" class="btn btn-secondary">Выполнено</button>
-            </form>
-        </div>
-        <div class="btn-group">
-            <form th:action="@{/deleteTask}" method="POST" th:object="${task}">
-              <input type="hidden" name="id" th:field="*{id}"/>
-              <button type="submit" class="btn btn-secondary">Удалить</button>
-            </form>
-        </div>
-        <div class="btn-group">
-          <form th:action="@{/tasks}" method="GET">
-            <button type="submit" class="btn btn-secondary">Отмена</button>
-          </form>
-        </div>
-      </div>
-    </div>
+
+  <div class="btn-group">
+    <form th:action="@{/tasks/formAdd}">
+      <button type="submit" class="btn btn-secondary">Добавить задачу</button>
+    </form>
+    <form th:action="@{/tasks}">
+      <button type="submit" class="btn btn-secondary">Все задачи</button>
+    </form>
+    <form th:action="@{|/tasks/${true}|}">
+      <button type="submit" class="btn btn-secondary">Выполненные</button>
+    </form>
+  <form th:action="@{|/tasks/${false}|}">
+      <button type="submit" class="btn btn-secondary">Не выполненные</button>
+    </form>
+  </div>
+
+  <div class="row">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Описание</th>
+        <th scope="col">Дата создания</th>
+        <th scope="col">Статус</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="task: ${tasks}">
+        <td th:text="${task.id}"></td>
+        <td>
+          <a th:href="@{|/tasks/formDetail/${task.id}|}">
+            <i class="fa fa-edit"></i>
+          </a>
+        <span th:text="${task.description}"></span>
+        </td>
+        <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy')}"></td>
+        <td>
+          <span th:if="${!task.done}">
+            Не выполнено
+          </span>
+          <span th:if="${task.done}">
+             выполнено
+          </span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 </body>

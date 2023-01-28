@@ -1,42 +1,23 @@
 package ru.job4j.todo.service;
 
-import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.store.Store;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 
-@Service
-public class TaskService {
+public interface TaskService {
 
-    private final Store taskStore;
+    void add(Task task);
 
-    private TaskService(Store taskStore) {
-        this.taskStore = taskStore;
-    }
+    boolean update(Task task);
 
-    public void add(Task task) {
-        taskStore.add(task);
-    }
+    boolean delete(Task task);
 
-    public boolean update(Task task) {
-        return taskStore.update(task);
-    }
+    Collection<Task> findAll();
 
-    public boolean delete(Task task) {
-        return taskStore.delete(task.getId());
-    }
+    Optional<Task> findById(int id);
 
-    public Collection<Task> findAll() {
-        return taskStore.findAll();
-    }
+    Collection<Task> findByDone(boolean done);
 
-    public Task findById(int id) {
-        return taskStore.findById(id);
-    }
-
-    public Collection<Task> findByDone(boolean done) {
-        return taskStore.findByDone(done);
-    }
+    boolean complete(int id);
 }
