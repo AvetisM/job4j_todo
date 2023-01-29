@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <!-- Required meta tags -->
@@ -18,40 +18,38 @@
   <title>todo</title>
 </head>
 <body>
-<div class="container">
+<div class="container pt-3">
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">todo</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-item nav-link" th:href="@{/tasks}">Задачи</a>
-      </div>
-    </div>
   </nav>
-  <div class="row pt-3">
+  <div class="row">
     <div class="card" style="width: 100%">
       <div class="card-header">
-        Новый пользователь.
+        Авторизация
       </div>
       <div class="card-body">
         <div th:if="${fail}" class="alert alert-danger" role="alert">
-          <td th:text="${message}"></td>
+          Логин или пароль введены не верно!
         </div>
-        <form th:action="@{/registration}" method="POST">
+        <form th:action="@{user/login}" method="POST">
           <div class="form-group">
-            <label for="name">Имя</label>
-            <input type="text" class="form-control" name="name" id="name">
-            <label for="name">Логин</label>
-            <input type="text" class="form-control" name="login" id=login">
-            <label for="name">Пароль</label>
-            <input type="text" class="form-control" name="password" id="password">
-            <input type="hidden" name="id" value="0"/>
+            <label>Логин</label>
+            <input type="text" class="form-control" name="login">
           </div>
-          <button type="submit" class="btn btn-primary">Сохранить</button>
+          <div class="form-group">
+            <label>Пароль</label>
+            <input type="text" class="form-control" name="password">
+          </div>
+          <input type="hidden" name="id" value="0"/>
+          <button type="submit" class="btn btn-secondary">Войти</button>
         </form>
       </div>
+      <form th:action="@{user/formAdd}" method="GET">
+        <button type="submit" class="btn btn-secondary">Регистрация</button>
+      </form>
     </div>
   </div>
 </div>

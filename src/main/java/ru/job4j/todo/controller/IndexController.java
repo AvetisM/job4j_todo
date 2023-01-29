@@ -12,6 +12,6 @@ public class IndexController {
     @GetMapping("/index")
     public String index(Model model, HttpSession session) {
         SessionService.modelAddUser(model, session);
-        return "index";
+        return "user/login";
     }
 }
