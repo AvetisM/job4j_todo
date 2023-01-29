@@ -16,21 +16,21 @@ public class TaskController {
 
     private final TaskDBService taskDBService;
 
-    @GetMapping("")
+    @GetMapping
     public String tasks(Model model) {
         model.addAttribute("tasks", taskDBService.findAll());
-        return "Task/tasks";
+        return "task/tasks";
     }
 
     @GetMapping("/{done}")
     public String tasksDone(Model model, @PathVariable("done") boolean done) {
         model.addAttribute("tasks", taskDBService.findByDone(done));
-        return "Task/tasks";
+        return "task/tasks";
     }
 
     @GetMapping("/formAdd")
     public String formAdd(Model model) {
-        return "Task/add";
+        return "task/add";
     }
 
     @GetMapping("/formDetail/{id}")
@@ -38,10 +38,10 @@ public class TaskController {
         Optional<Task> task = taskDBService.findById(id);
         if (task.isEmpty()) {
             model.addAttribute("message", "Не удалось найти задачу.");
-            return "errorPage";
+            return "error";
         }
         model.addAttribute("task", task.get());
-        return "Task/detail";
+        return "task/detail";
     }
 
     @PostMapping("/create")
@@ -52,10 +52,10 @@ public class TaskController {
 
     @PostMapping("/update")
     public String update(Model model, @ModelAttribute Task task) {
-        boolean rls = taskDBService.update(task);
-        if (!rls) {
+        boolean result = taskDBService.update(task);
+        if (!result) {
             model.addAttribute("message", "Не удалось обновить задачу.");
-            return "errorPage";
+            return "error";
         }
         return "redirect:/tasks";
     }
@@ -63,20 +63,20 @@ public class TaskController {
     @PostMapping("/complete")
     public String complete(Model model, @ModelAttribute Task task) {
         task.setDone(true);
-        boolean rls = taskDBService.complete(task.getId());
-        if (!rls) {
+        boolean result = taskDBService.complete(task.getId());
+        if (!result) {
             model.addAttribute("message", "Не удалось сделать задачу выполненной.");
-            return "errorPage";
+            return "error";
         }
         return "redirect:/tasks";
     }
 
     @PostMapping("/delete")
     public String delete(Model model, @ModelAttribute Task task) {
-        boolean rls = taskDBService.delete(task);
-        if (!rls) {
+        boolean result = taskDBService.delete(task);
+        if (!result) {
             model.addAttribute("message", "Не удалось удалить задачу.");
-            return "errorPage";
+            return "error";
         }
         return "redirect:/tasks";
     }

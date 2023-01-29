@@ -50,7 +50,7 @@ public class TaskDBStore implements Store {
 
     @Override
     public boolean update(Task task) {
-        boolean rls = false;
+        boolean result = false;
         Session session = sf.openSession();
         try {
             session.beginTransaction();
@@ -60,7 +60,7 @@ public class TaskDBStore implements Store {
                     .setParameter("fDone", task.isDone())
                     .executeUpdate();
             session.getTransaction().commit();
-            rls = true;
+            result = true;
         } catch (Exception e) {
             session.getTransaction().rollback();
             LOG.error(e.getMessage(), e);
@@ -68,12 +68,12 @@ public class TaskDBStore implements Store {
             session.close();
         }
 
-        return rls;
+        return result;
     }
 
     @Override
     public boolean delete(int id) {
-        boolean rls = false;
+        boolean result = false;
         Session session = sf.openSession();
         try {
             session.beginTransaction();
@@ -81,7 +81,7 @@ public class TaskDBStore implements Store {
                     .setParameter("fId", id)
                     .executeUpdate();
             session.getTransaction().commit();
-            rls = true;
+            result = true;
         } catch (Exception e) {
             session.getTransaction().rollback();
             LOG.error(e.getMessage(), e);
@@ -89,60 +89,60 @@ public class TaskDBStore implements Store {
             session.close();
         }
 
-        return rls;
+        return result;
     }
 
     @Override
     public List<Task> findAll() {
         Session session = sf.openSession();
-        List<Task> rls = new ArrayList<>();
+        List<Task> result = new ArrayList<>();
         try {
 
             Query<Task> query = session.createQuery(FIND_ALL_TASKS, Task.class);
-            rls = query.list();
+            result = query.list();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         } finally {
             session.close();
         }
-        return rls;
+        return result;
     }
 
     @Override
     public Optional<Task> findById(int id) {
-        Optional rls = Optional.empty();
+        Optional result = Optional.empty();
         Session session = sf.openSession();
         try {
             Query<Task> query = session.createQuery(FIND_TASK_BY_ID, Task.class);
             query.setParameter("fId", id);
-            rls = Optional.of(query.uniqueResult());
+            result = Optional.of(query.uniqueResult());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         } finally {
             session.close();
         }
-        return rls;
+        return result;
     }
 
     @Override
     public List<Task> findByDone(boolean done) {
         Session session = sf.openSession();
-        List<Task> rls = new ArrayList<>();
+        List<Task> result = new ArrayList<>();
         try {
             Query<Task> query = session.createQuery(FIND_TASK_BY_DONE, Task.class);
             query.setParameter("fDone", done);
-            rls = query.list();
+            result = query.list();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         } finally {
             session.close();
         }
-        return rls;
+        return result;
     }
 
     @Override
     public boolean complete(int id) {
-        boolean rls = false;
+        boolean result = false;
         Session session = sf.openSession();
         try {
             session.beginTransaction();
@@ -150,14 +150,14 @@ public class TaskDBStore implements Store {
                     .setParameter("fId", id)
                     .executeUpdate();
             session.getTransaction().commit();
-            rls = true;
+            result = true;
         } catch (Exception e) {
             session.getTransaction().rollback();
             LOG.error(e.getMessage(), e);
         } finally {
             session.close();
         }
-        return rls;
+        return result;
     }
 
 }
