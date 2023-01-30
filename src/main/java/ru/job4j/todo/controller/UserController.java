@@ -48,14 +48,14 @@ public class UserController {
         if (userDb.isEmpty()) {
             return "redirect:/user/loginPage?fail=true";
         }
-        HttpSession session = req.getSession();
-        session.setAttribute("user", userDb.get());
+        HttpSession httpSession = req.getSession();
+        httpSession.setAttribute("user", userDb.get());
         return "redirect:/tasks";
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
+    public String logout(HttpSession httpSession) {
+        httpSession.invalidate();
         return "redirect:/user/loginPage";
     }
 }

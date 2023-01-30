@@ -24,6 +24,11 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" th:href="@{/user/formAdd}">Регистрация</a>
+      </div>
+    </div>
   </nav>
   <div class="row">
     <div class="card" style="width: 100%">
@@ -41,15 +46,12 @@
           </div>
           <div class="form-group">
             <label>Пароль</label>
-            <input type="text" class="form-control" name="password">
+            <input type="password" class="form-control" name="password">
           </div>
           <input type="hidden" name="id" value="0"/>
           <button type="submit" class="btn btn-secondary">Войти</button>
         </form>
       </div>
-      <form th:action="@{user/formAdd}" method="GET">
-        <button type="submit" class="btn btn-secondary">Регистрация</button>
-      </form>
     </div>
   </div>
 </div>

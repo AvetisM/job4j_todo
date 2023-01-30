@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
-import ru.job4j.todo.service.SessionService;
+import ru.job4j.todo.util.SessionService;
 import ru.job4j.todo.service.TaskDBService;
 
 import javax.servlet.http.HttpSession;
@@ -19,16 +19,17 @@ public class TaskController {
     private final TaskDBService taskDBService;
 
     @GetMapping
-    public String tasks(Model model, HttpSession session) {
+    public String tasks(Model model, HttpSession httpSession) {
         model.addAttribute("tasks", taskDBService.findAll());
-        SessionService.modelAddUser(model, session);
+        SessionService.modelAddUser(model, httpSession);
         return "task/tasks";
     }
 
     @GetMapping("/{done}")
-    public String tasksDone(Model model, HttpSession session, @PathVariable("done") boolean done) {
+    public String tasksDone(Model model, HttpSession httpSession,
+                            @PathVariable("done") boolean done) {
         model.addAttribute("tasks", taskDBService.findByDone(done));
-        SessionService.modelAddUser(model, session);
+        SessionService.modelAddUser(model, httpSession);
         return "task/tasks";
     }
 

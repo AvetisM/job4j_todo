@@ -15,7 +15,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class UserDBStore {
 
-    public static final Logger LOG = LoggerFactory.getLogger(TaskDBStore.class.getName());
+    public static final Logger LOG = LoggerFactory.getLogger(UserDBStore.class.getName());
     private static final String FIND_USER_BY_LOGIN_AND_PASSWORD =
             "FROM User as u WHERE u.login = :fLogin and u.password = :fPassword";
 

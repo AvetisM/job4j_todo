@@ -1,4 +1,4 @@
-package ru.job4j.todo.service;
+package ru.job4j.todo.util;
 
 import org.springframework.ui.Model;
 import ru.job4j.todo.model.User;
@@ -6,16 +6,13 @@ import ru.job4j.todo.model.User;
 import javax.servlet.http.HttpSession;
 
 public final class SessionService {
-    public SessionService() {
+    private SessionService() {
         throw new UnsupportedOperationException(
                 "Utility class and cannot be instantiated");
     }
 
-    public static void modelAddUser(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            user = new User(0, "Гость", "", "");
-        }
+    public static void modelAddUser(Model model, HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
         model.addAttribute("user", user);
     }
 }

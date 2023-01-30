@@ -27,7 +27,7 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <a class="nav-item nav-link" th:href="@{/tasks}">Задачи</a>
-        <a class="nav-item nav-link" th:if="${user.name != 'Гость'}" th:href="@{user/logout}">
+        <a class="nav-item nav-link" th:if="${user != null}" th:href="@{user/logout}">
           <span th:text="${user.name}"></span>
           <span> | Выйти</span>
         </a>
