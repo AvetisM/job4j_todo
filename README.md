@@ -1,8 +1,8 @@
 # Проект "job4j_todo"
 
 ### 1. Данное приложение разработано для хранения списка задач. 
-###    Приложение оболадает несколькими удобными функциями:
 
+####    Приложение оболадает несколькими удобными функциями:
 ##### * Отображается текущий статус задачи - "Выполнено/Не выполнено".
 
 <img src="data/Список задач.png"/>
@@ -24,20 +24,28 @@
 + Spring (Spring MVC, Spring boot)
 + Hibernate 5
 + Thymeleaf 3 
-+ Bootstrap 5.1 (CSS 3, HTML 5).
++ Bootstrap 5.1 (CSS 3, HTML 5)
++ liquibase
++ lombok 1.18.22
++ Mockito 4.0.0
++ JUnit 4
++ h2database
++ PostgresSql 14
 
 ### 3. Требования к окружению:
 + Java 17
-+ Maven 3.8.7
++ Maven 3.x
 + PostgresSql 14
 
-### 4. Чтобы запустить приложение необходимо:
-+ Создать базу данных ```create database todo;```
-+ Открыть консоль в операционной системе ```cmd.exe```
-+ Перейти в директорию с проектом 
-+ Выполнить команду mvn exec:java -Dexec.mainclass="ru.job4j.Main"
-+ Перейти на стартовую страницу http://localhost:8080/index
+### 4. Запуск приложения
++ Создать базу данных
 
+```create database todo;```
+
++ Запуск приложения с maven. Перейдите в корень проекта через командную строку и выполните команды:
+
+``` mvn clean install```
+``` mvn spring-boot:run```
 ### 5. Контакты:
 - **email**    avetis.mkhitaryants@gmail.com
 - **телеграм** @avetis_m
