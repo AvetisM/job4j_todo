@@ -56,6 +56,7 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Описание</th>
+        <th scope="col">Ответственный</th>
         <th scope="col">Дата создания</th>
         <th scope="col">Статус</th>
       </tr>
@@ -68,6 +69,9 @@
             <i class="fa fa-edit"></i>
           </a>
         <span th:text="${task.description}"></span>
+        </td>
+        <td>
+        <span th:text="${task.user.name}"></span>
         </td>
         <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy')}"></td>
         <td>
