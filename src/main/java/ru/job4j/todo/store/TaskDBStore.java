@@ -1,6 +1,8 @@
 package ru.job4j.todo.store;
 
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.util.CrudRepository;
@@ -12,6 +14,8 @@ import java.util.Optional;
 @Repository
 @AllArgsConstructor
 public class TaskDBStore implements Store {
+
+    public static final Logger LOG = LoggerFactory.getLogger(UserDBStore.class.getName());
 
     private static final String REPLACE_TASK =
             "UPDATE Task "
@@ -35,22 +39,32 @@ public class TaskDBStore implements Store {
 
     @Override
     public boolean update(Task task) {
-        crudRepository.run(
-                REPLACE_TASK,
-                Map.of("fId", task.getId(),
-                        "fDescription", task.getDescription(),
-                        "fDone", task.isDone())
-        );
-        return true;
+        try {
+            crudRepository.run(
+                    REPLACE_TASK,
+                    Map.of("fId", task.getId(),
+                            "fDescription", task.getDescription(),
+                            "fDone", task.isDone())
+            );
+            return true;
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return false;
+        }
     }
 
     @Override
     public boolean delete(int id) {
-        crudRepository.run(
-                DELETE_TASK,
-                Map.of("fId", id)
-        );
-        return true;
+        try {
+            crudRepository.run(
+                    DELETE_TASK,
+                    Map.of("fId", id)
+            );
+            return true;
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return false;
+        }
     }
 
     @Override
@@ -68,15 +82,23 @@ public class TaskDBStore implements Store {
 
     @Override
     public List<Task> findByDone(boolean done) {
-        return crudRepository.query(FIND_TASK_BY_DONE, Task.class);
+        return crudRepository.query(FIND_TASK_BY_DONE,
+                Task.class,
+                Map.of("fDone", done)
+        );
     }
 
     @Override
     public boolean complete(int id) {
-        crudRepository.run(
-                COMPLETE_TASK,
-                Map.of("fId", id)
-        );
-        return true;
+        try {
+            crudRepository.run(
+                    COMPLETE_TASK,
+                    Map.of("fId", id)
+            );
+            return true;
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return false;
+        }
     }
 }
