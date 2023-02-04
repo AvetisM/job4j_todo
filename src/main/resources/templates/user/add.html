@@ -26,14 +26,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link" th:href="@{/user/loginPage}">Авторизация</a>
+        <a class="nav-item nav-link" th:href="@{/user/loginPage}">Sign in</a>
       </div>
     </div>
   </nav>
   <div class="row pt-3">
     <div class="card" style="width: 100%">
       <div class="card-header">
-        Новый пользователь.
+        New user.
       </div>
       <div class="card-body">
         <div th:if="${fail}" class="alert alert-danger" role="alert">
@@ -41,15 +41,15 @@
         </div>
         <form th:action="@{/user/registration}" method="POST">
           <div class="form-group">
-            <label for="name">Имя</label>
+            <label for="name">Name</label>
             <input type="text" class="form-control" name="name" id="name">
-            <label for="name">Логин</label>
+            <label for="name">Login</label>
             <input type="text" class="form-control" name="login" id="login">
-            <label for="name">пароль</label>
+            <label for="name">Password</label>
             <input type="password" class="form-control" name="password" id="password">
             <input type="hidden" name="id" value="0"/>
           </div>
-          <button type="submit" class="btn btn-secondary">Сохранить</button>
+          <button type="submit" class="btn btn-secondary">Sign up</button>
         </form>
       </div>
     </div>

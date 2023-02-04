@@ -26,10 +26,10 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link" th:href="@{/tasks}">Задачи</a>
+        <a class="nav-item nav-link" th:href="@{/tasks}">Tasks</a>
         <a class="nav-item nav-link" th:if="${user != null}" th:href="@{user/logout}">
           <span th:text="${user.name}"></span>
-          <span> | Выйти</span>
+          <span> | Sign out</span>
         </a>
       </div>
     </div>
@@ -37,16 +37,16 @@
 
   <div class="btn-group">
     <form th:action="@{/tasks/formAdd}">
-      <button type="submit" class="btn btn-secondary">Добавить задачу</button>
+      <button type="submit" class="btn btn-secondary">Create task</button>
     </form>
     <form th:action="@{/tasks}">
-      <button type="submit" class="btn btn-secondary">Все задачи</button>
+      <button type="submit" class="btn btn-secondary">All tasks</button>
     </form>
     <form th:action="@{|/tasks/${true}|}">
-      <button type="submit" class="btn btn-secondary">Выполненные</button>
+      <button type="submit" class="btn btn-secondary">Completed</button>
     </form>
   <form th:action="@{|/tasks/${false}|}">
-      <button type="submit" class="btn btn-secondary">Не выполненные</button>
+      <button type="submit" class="btn btn-secondary">Not completed</button>
     </form>
   </div>
 
@@ -55,10 +55,11 @@
       <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Описание</th>
-        <th scope="col">Ответственный</th>
-        <th scope="col">Дата создания</th>
-        <th scope="col">Статус</th>
+        <th scope="col">Description</th>
+        <th scope="col">User</th>
+        <th scope="col">Priority</th>
+        <th scope="col">Created</th>
+        <th scope="col">Status</th>
       </tr>
       </thead>
       <tbody>
@@ -73,13 +74,16 @@
         <td>
         <span th:text="${task.user.name}"></span>
         </td>
+        <td>
+          <span th:text="${task.priority.name}"></span>
+        </td>
         <td th:text="${#temporals.format(task.created, 'dd-MM-yyyy')}"></td>
         <td>
           <span th:if="${!task.done}">
-            Не выполнено
+            Not completed
           </span>
           <span th:if="${task.done}">
-             выполнено
+            Completed
           </span>
         </td>
       </tr>

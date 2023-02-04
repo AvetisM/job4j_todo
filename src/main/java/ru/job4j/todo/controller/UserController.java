@@ -27,7 +27,7 @@ public class UserController {
     public String registration(Model model, @ModelAttribute User user) {
         Optional<User> regUser = userDBService.add(user);
         if (regUser.isEmpty()) {
-            model.addAttribute("message", "Пользователь с таким логином уже существует");
+            model.addAttribute("message", "Login is already taken");
             model.addAttribute("fail", true);
             return "user/add";
         }

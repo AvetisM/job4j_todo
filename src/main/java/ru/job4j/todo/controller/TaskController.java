@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
+import ru.job4j.todo.service.PriorityService;
 import ru.job4j.todo.util.SessionService;
 import ru.job4j.todo.service.TaskDBService;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class TaskController {
 
     private final TaskDBService taskDBService;
+    private final PriorityService priorityService;
 
     @GetMapping
     public String tasks(Model model, HttpSession httpSession) {
@@ -36,6 +38,7 @@ public class TaskController {
 
     @GetMapping("/formAdd")
     public String formAdd(Model model) {
+        model.addAttribute("priorities", priorityService.getAllPriorities());
         return "task/add";
     }
 
@@ -47,22 +50,29 @@ public class TaskController {
             return "error";
         }
         model.addAttribute("task", task.get());
+        model.addAttribute("priorities", priorityService.getAllPriorities());
         return "task/detail";
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task, HttpSession httpSession) {
+    public String create(@ModelAttribute Task task,
+                         @RequestParam("priority.id") int priorityId,
+                         HttpSession httpSession) {
         task.setUser((User) httpSession.getAttribute("user"));
+        task.setPriority(priorityService.findById(priorityId).get());
         taskDBService.add(task);
         return "redirect:/tasks";
     }
 
     @PostMapping("/update")
-    public String update(Model model, @ModelAttribute Task task) {
+    public String update(Model model,
+                         @ModelAttribute Task task,
+                         @RequestParam("priority.id") int priorityId) {
+        task.setPriority(priorityService.findById(priorityId).get());
         boolean result = taskDBService.update(task);
         if (!result) {
-            model.addAttribute("message", "Не удалось обновить задачу.");
-            return "error";
+            model.addAttribute("message", "Failed to update task.");
+            return "general/error";
         }
         return "redirect:/tasks";
     }
@@ -72,8 +82,8 @@ public class TaskController {
         task.setDone(true);
         boolean result = taskDBService.complete(task.getId());
         if (!result) {
-            model.addAttribute("message", "Не удалось сделать задачу выполненной.");
-            return "error";
+            model.addAttribute("message", "Failed to complete the task.");
+            return "general/error";
         }
         return "redirect:/tasks";
     }
@@ -82,8 +92,8 @@ public class TaskController {
     public String delete(Model model, @ModelAttribute Task task) {
         boolean result = taskDBService.delete(task);
         if (!result) {
-            model.addAttribute("message", "Не удалось удалить задачу.");
-            return "error";
+            model.addAttribute("message", "Failed to delete task.");
+            return "general/error";
         }
         return "redirect:/tasks";
     }
