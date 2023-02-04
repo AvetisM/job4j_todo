@@ -71,7 +71,7 @@ public class CrudRepository {
     public <T> T tx(Function<Session, T> command) {
         var session = sf.openSession();
         Transaction tx = null;
-        try (session) {
+        try {
             tx = session.beginTransaction();
             T rsl = command.apply(session);
             tx.commit();
