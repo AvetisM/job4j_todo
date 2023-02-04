@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.PriorityService;
+import ru.job4j.todo.util.Response;
 import ru.job4j.todo.util.SessionService;
 import ru.job4j.todo.service.TaskDBService;
 
@@ -55,11 +57,19 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public String create(@ModelAttribute Task task,
+    public String create(Model model,
+                         @ModelAttribute Task task,
                          @RequestParam("priority.id") int priorityId,
                          HttpSession httpSession) {
+
+        Optional<Priority> priorityOptional = priorityService.findById(priorityId);
+        Response response = priorityService.checkPriority(priorityOptional);
+        if (!response.isResult()) {
+            model.addAttribute("message", response.getMessage());
+            return "general/error";
+        }
         task.setUser((User) httpSession.getAttribute("user"));
-        task.setPriority(priorityService.findById(priorityId).get());
+        task.setPriority(priorityOptional.get());
         taskDBService.add(task);
         return "redirect:/tasks";
     }
@@ -68,7 +78,14 @@ public class TaskController {
     public String update(Model model,
                          @ModelAttribute Task task,
                          @RequestParam("priority.id") int priorityId) {
-        task.setPriority(priorityService.findById(priorityId).get());
+
+        Optional<Priority> priorityOptional = priorityService.findById(priorityId);
+        Response response = priorityService.checkPriority(priorityOptional);
+        if (!response.isResult()) {
+            model.addAttribute("message", response.getMessage());
+            return "general/error";
+        }
+        task.setPriority(priorityOptional.get());
         boolean result = taskDBService.update(task);
         if (!result) {
             model.addAttribute("message", "Failed to update task.");
