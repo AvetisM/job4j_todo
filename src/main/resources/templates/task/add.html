@@ -43,6 +43,12 @@
             <input type="hidden" name="id" value="0"/>
           </div>
           <div class="form-group">
+            <label for="priority.id">Category</label>
+            <select class="form-control" multiple id="category.id" name="category.id">
+              <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="priority.id">Priority</label>
             <select class="form-control" id="priority.id" name="priority.id">
               <option th:each="priority : ${priorities}" th:value="${priority.id}" th:text="${priority.name}"></option>
