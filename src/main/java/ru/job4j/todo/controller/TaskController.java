@@ -68,7 +68,7 @@ public class TaskController {
                          HttpSession httpSession) {
 
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
-        if (priorityOptional.isEmpty()) {
+        if (!priorityService.checkPriority(priorityOptional)) {
             model.addAttribute("message", "Failed to find priority.");
             return "general/error";
         }
@@ -84,7 +84,7 @@ public class TaskController {
                          @RequestParam("priority.id") int priorityId) {
 
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
-        if (priorityOptional.isEmpty()) {
+        if (!priorityService.checkPriority(priorityOptional)) {
             model.addAttribute("message", "Failed to find priority.");
             return "general/error";
         }

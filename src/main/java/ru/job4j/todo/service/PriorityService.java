@@ -21,4 +21,8 @@ public class PriorityService {
     public Optional<Priority> findById(int id) {
         return priorityDBStore.findByID(id);
     }
+
+    public boolean checkPriority(Optional<Priority> priorityOptional) {
+        return priorityOptional.isPresent();
+    }
 }
