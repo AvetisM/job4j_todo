@@ -57,6 +57,7 @@ public class TaskController {
         }
         model.addAttribute("task", task.get());
         model.addAttribute("priorities", priorityService.getAllPriorities());
+        model.addAttribute("categories", categoryService.findAll());
         return "task/detail";
     }
 
@@ -64,16 +65,17 @@ public class TaskController {
     public String create(Model model,
                          @ModelAttribute Task task,
                          @RequestParam("priority.id") int priorityId,
-                         @RequestParam("categories") List<Category> categories,
+                         @RequestParam("categoryList") String[] idArray,
                          HttpSession httpSession) {
-
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
         if (!priorityService.checkPriority(priorityOptional)) {
             model.addAttribute("message", "Failed to find priority.");
             return "general/error";
         }
+        List<Category> categories = categoryService.getCategoryListByIdArray(idArray);
         task.setUser((User) httpSession.getAttribute("user"));
         task.setPriority(priorityOptional.get());
+        task.setCategories(categories);
         taskDBService.add(task);
         return "redirect:/tasks";
     }
@@ -81,14 +83,17 @@ public class TaskController {
     @PostMapping("/update")
     public String update(Model model,
                          @ModelAttribute Task task,
-                         @RequestParam("priority.id") int priorityId) {
+                         @RequestParam("priority.id") int priorityId,
+                         @RequestParam("categoryList") String[] idArray) {
 
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
         if (!priorityService.checkPriority(priorityOptional)) {
             model.addAttribute("message", "Failed to find priority.");
             return "general/error";
         }
+        List<Category> categories = categoryService.getCategoryListByIdArray(idArray);
         task.setPriority(priorityOptional.get());
+        task.setCategories(categories);
         boolean result = taskDBService.update(task);
         if (!result) {
             model.addAttribute("message", "Failed to update task.");

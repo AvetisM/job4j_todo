@@ -34,11 +34,11 @@ public class Task {
     @JoinColumn(name = "priority_id")
     private Priority priority;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "task_categories",
             joinColumns = { @JoinColumn(name = "task_id") },
-            inverseJoinColumns = { @JoinColumn(name = "category_id_id") }
+            inverseJoinColumns = { @JoinColumn(name = "category_id") }
     )
     private List<Category> categories = new ArrayList<>();
 }
