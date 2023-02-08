@@ -20,7 +20,7 @@ public class TaskDBService implements TaskService {
 
     public boolean add(Task task, int priorityId, String[] categoryIdArray) {
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
-        if (!priorityService.checkPriority(priorityOptional)) {
+        if (priorityOptional.isEmpty()) {
             return false;
         }
         List<Category> categories = categoryService.getCategoryListByIdArray(categoryIdArray);
@@ -31,7 +31,7 @@ public class TaskDBService implements TaskService {
 
     public boolean update(Task task, int priorityId) {
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
-        if (!priorityService.checkPriority(priorityOptional)) {
+        if (priorityOptional.isEmpty()) {
             return false;
         }
         task.setPriority(priorityOptional.get());
