@@ -34,9 +34,14 @@ public class TaskDBStore implements Store {
     private final CrudRepository crudRepository;
 
     @Override
-    public Task add(Task task) {
-        crudRepository.run(session -> session.persist(task));
-        return task;
+    public boolean add(Task task) {
+        try {
+            crudRepository.run(session -> session.persist(task));
+            return true;
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return false;
+        }
     }
 
     @Override

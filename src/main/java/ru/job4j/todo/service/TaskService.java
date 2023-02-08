@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface TaskService {
 
-    void add(Task task);
+    boolean add(Task task, int priorityId, String[] categoryIdArray);
 
-    boolean update(Task task);
+    boolean update(Task task, int priorityId);
 
     boolean delete(Task task);
 

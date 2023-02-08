@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.todo.model.Category;
-import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.model.User;
 import ru.job4j.todo.service.CategoryService;
@@ -14,7 +12,6 @@ import ru.job4j.todo.util.SessionService;
 import ru.job4j.todo.service.TaskDBService;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -52,7 +49,7 @@ public class TaskController {
     public String formDetail(Model model, @PathVariable("id") int id) {
         Optional<Task> task = taskDBService.findById(id);
         if (task.isEmpty()) {
-            model.addAttribute("message", "Не удалось найти задачу.");
+            model.addAttribute("message", "Failed to find a task.");
             return "error";
         }
         model.addAttribute("task", task.get());
@@ -65,37 +62,21 @@ public class TaskController {
     public String create(Model model,
                          @ModelAttribute Task task,
                          @RequestParam("priority.id") int priorityId,
-                         @RequestParam("categoryList") String[] idArray,
+                         @RequestParam("categoryList") String[] categoryIdArray,
                          HttpSession httpSession) {
-        Optional<Priority> priorityOptional = priorityService.findById(priorityId);
-        if (!priorityService.checkPriority(priorityOptional)) {
-            model.addAttribute("message", "Failed to find priority.");
+        task.setUser((User) httpSession.getAttribute("user"));
+        if (!taskDBService.add(task, priorityId, categoryIdArray)) {
+            model.addAttribute("message", "Failed to create task.");
             return "general/error";
         }
-        List<Category> categories = categoryService.getCategoryListByIdArray(idArray);
-        task.setUser((User) httpSession.getAttribute("user"));
-        task.setPriority(priorityOptional.get());
-        task.setCategories(categories);
-        taskDBService.add(task);
         return "redirect:/tasks";
     }
 
     @PostMapping("/update")
     public String update(Model model,
                          @ModelAttribute Task task,
-                         @RequestParam("priority.id") int priorityId,
-                         @RequestParam("categoryList") String[] idArray) {
-
-        Optional<Priority> priorityOptional = priorityService.findById(priorityId);
-        if (!priorityService.checkPriority(priorityOptional)) {
-            model.addAttribute("message", "Failed to find priority.");
-            return "general/error";
-        }
-        List<Category> categories = categoryService.getCategoryListByIdArray(idArray);
-        task.setPriority(priorityOptional.get());
-        task.setCategories(categories);
-        boolean result = taskDBService.update(task);
-        if (!result) {
+                         @RequestParam("priority.id") int priorityId) {
+        if (!taskDBService.update(task, priorityId)) {
             model.addAttribute("message", "Failed to update task.");
             return "general/error";
         }
@@ -105,8 +86,7 @@ public class TaskController {
     @PostMapping("/complete")
     public String complete(Model model, @ModelAttribute Task task) {
         task.setDone(true);
-        boolean result = taskDBService.complete(task.getId());
-        if (!result) {
+        if (!taskDBService.complete(task.getId())) {
             model.addAttribute("message", "Failed to complete the task.");
             return "general/error";
         }
@@ -115,8 +95,7 @@ public class TaskController {
 
     @PostMapping("/delete")
     public String delete(Model model, @ModelAttribute Task task) {
-        boolean result = taskDBService.delete(task);
-        if (!result) {
+        if (!taskDBService.delete(task)) {
             model.addAttribute("message", "Failed to delete task.");
             return "general/error";
         }

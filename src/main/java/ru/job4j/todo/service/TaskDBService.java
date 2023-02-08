@@ -2,6 +2,8 @@ package ru.job4j.todo.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.job4j.todo.model.Category;
+import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.Store;
 
@@ -13,12 +15,26 @@ import java.util.Optional;
 public class TaskDBService implements TaskService {
 
     private final Store taskStore;
+    private final PriorityService priorityService;
+    private final CategoryService categoryService;
 
-    public void add(Task task) {
-        taskStore.add(task);
+    public boolean add(Task task, int priorityId, String[] categoryIdArray) {
+        Optional<Priority> priorityOptional = priorityService.findById(priorityId);
+        if (!priorityService.checkPriority(priorityOptional)) {
+            return false;
+        }
+        List<Category> categories = categoryService.getCategoryListByIdArray(categoryIdArray);
+        task.setCategories(categories);
+        task.setPriority(priorityOptional.get());
+        return taskStore.add(task);
     }
 
-    public boolean update(Task task) {
+    public boolean update(Task task, int priorityId) {
+        Optional<Priority> priorityOptional = priorityService.findById(priorityId);
+        if (!priorityService.checkPriority(priorityOptional)) {
+            return false;
+        }
+        task.setPriority(priorityOptional.get());
         return taskStore.update(task);
     }
 

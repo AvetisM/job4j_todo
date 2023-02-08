@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface Store {
 
-    Task add(Task task);
+    boolean add(Task task);
 
     boolean update(Task task);
 
