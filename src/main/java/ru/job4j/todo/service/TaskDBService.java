@@ -7,6 +7,7 @@ import ru.job4j.todo.model.Priority;
 import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.Store;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public class TaskDBService implements TaskService {
     private final PriorityService priorityService;
     private final CategoryService categoryService;
 
+    @Transactional
     public boolean add(Task task, int priorityId, String[] categoryIdArray) {
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
         if (priorityOptional.isEmpty()) {
