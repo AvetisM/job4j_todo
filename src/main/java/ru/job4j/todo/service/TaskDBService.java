@@ -8,8 +8,7 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.Store;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -25,17 +24,27 @@ public class TaskDBService implements TaskService {
         if (priorityOptional.isEmpty()) {
             return false;
         }
-        List<Category> categories = categoryService.getCategoryListByIdArray(categoryIdArray);
+        Integer[] categoryIdIntArray = Arrays.stream(categoryIdArray)
+                .mapToInt(Integer ::parseInt)
+                .boxed()
+                .toArray(Integer[]::new);
+        List<Category> categories = categoryService.getCategoryListByIdArray(categoryIdIntArray);
         task.setCategories(categories);
         task.setPriority(priorityOptional.get());
         return taskStore.add(task);
     }
 
-    public boolean update(Task task, int priorityId) {
+    public boolean update(Task task, int priorityId, String[] categoryIdArray) {
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
         if (priorityOptional.isEmpty()) {
             return false;
         }
+        Integer[] categoryIdIntArray = Arrays.stream(categoryIdArray)
+                .mapToInt(Integer ::parseInt)
+                .boxed()
+                .toArray(Integer[]::new);
+        List<Category> categories = categoryService.getCategoryListByIdArray(categoryIdIntArray);
+        task.setCategories(categories);
         task.setPriority(priorityOptional.get());
         return taskStore.update(task);
     }

@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.job4j.todo.model.Category;
 import ru.job4j.todo.store.CategoryDBStore;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +22,7 @@ public class CategoryService {
         return categoryDBStore.findById(id);
     }
 
-    public List<Category> getCategoryListByIdArray(String[] idArray) {
-        List<Category> categories = new ArrayList<>();
-        Arrays.stream(idArray)
-                .forEach(categoryId ->
-                findById(Integer.parseInt(categoryId)).ifPresent(categories::add));
-        return categories;
+    public List<Category> getCategoryListByIdArray(Integer[] idArray) {
+        return categoryDBStore.findByIds(idArray);
     }
-
 }

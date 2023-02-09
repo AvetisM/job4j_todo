@@ -47,14 +47,17 @@ public class TaskController {
 
     @GetMapping("/formDetail/{id}")
     public String formDetail(Model model, @PathVariable("id") int id) {
-        Optional<Task> task = taskDBService.findById(id);
-        if (task.isEmpty()) {
+        Optional<Task> optionalTask = taskDBService.findById(id);
+        if (optionalTask.isEmpty()) {
             model.addAttribute("message", "Failed to find a task.");
             return "error";
         }
-        model.addAttribute("task", task.get());
+        Task task = optionalTask.get();
+        model.addAttribute("task", task);
         model.addAttribute("priorities", priorityService.getAllPriorities());
-        model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("allCategories", categoryService.findAll());
+        model.addAttribute("priorityId", task.getPriority().getId());
+        model.addAttribute("categories", task.getCategories());
         return "task/detail";
     }
 
@@ -75,8 +78,11 @@ public class TaskController {
     @PostMapping("/update")
     public String update(Model model,
                          @ModelAttribute Task task,
-                         @RequestParam("priority.id") int priorityId) {
-        if (!taskDBService.update(task, priorityId)) {
+                         @RequestParam("priorityId") int priorityId,
+                         @RequestParam("categoryList") String[] categoryIdArray,
+                         HttpSession httpSession) {
+        task.setUser((User) httpSession.getAttribute("user"));
+        if (!taskDBService.update(task, priorityId, categoryIdArray)) {
             model.addAttribute("message", "Failed to update task.");
             return "general/error";
         }

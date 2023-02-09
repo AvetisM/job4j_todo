@@ -10,7 +10,7 @@ public interface TaskService {
 
     boolean add(Task task, int priorityId, String[] categoryIdArray);
 
-    boolean update(Task task, int priorityId);
+    boolean update(Task task, int priorityId, String[] categoryIdArray);
 
     boolean delete(Task task);
 

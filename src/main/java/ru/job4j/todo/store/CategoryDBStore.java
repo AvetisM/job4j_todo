@@ -6,9 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.job4j.todo.model.Category;
 import ru.job4j.todo.util.CrudRepository;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.util.*;
 
 @Repository
 @AllArgsConstructor
@@ -18,6 +17,8 @@ public class CategoryDBStore {
 
     private static final String FIND_ALL_CATEGORIES = "FROM Category";
     private static final String FIND_CATEGORY_BY_ID = "FROM Category WHERE id = :fId";
+
+    private static final String FIND_CATEGORY_BY_IDS = "FROM Category WHERE id in (:fId)";
     private final CrudRepository crudRepository;
 
     public List<Category> findAll() {
@@ -30,4 +31,12 @@ public class CategoryDBStore {
                 Map.of("fId", id)
         );
     }
+
+    public List<Category> findByIds(Integer[] idArray) {
+        return crudRepository.queryParameterList(FIND_CATEGORY_BY_IDS,
+                            Category.class,
+                            Map.of("fId", idArray)
+        );
+    }
+
 }
