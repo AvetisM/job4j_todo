@@ -26,34 +26,31 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link" th:href="@{/user/loginPage}">Sign in</a>
+        <a class="nav-item nav-link" th:href="@{/tasks}">Tasks</a>
       </div>
     </div>
   </nav>
   <div class="row pt-3">
     <div class="card" style="width: 100%">
       <div class="card-header">
-        New user.
+        User information.
       </div>
       <div class="card-body">
-        <div th:if="${fail}" class="alert alert-danger" role="alert">
-          <td th:text="${message}"></td>
-        </div>
-        <form th:action="@{/user/registration}" method="POST">
+        <form th:action="@{/user/update}" method="POST" th:object="${user}">
           <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" name="name" id="name">
+            <input type="hidden" name="id" th:field="*{id}"/>
             <label for="name">Login</label>
-            <input type="text" class="form-control" name="login" id="login">
+            <input type="hidden" class="form-control" name="login" id="login" th:field="*{login}">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" name="name" id="name" th:field="*{name}" required>
             <label for="name">Password</label>
-            <input type="password" class="form-control" name="password" id="password">
-            <label for="timeZoneId">Time zone</label>
-            <select class="form-control" id="timeZoneId" name="timeZoneId">
-              <option th:each="timeZone : ${availableZones}" th:value="${timeZone}" th:text="${timeZone}"></option>
+            <input type="password" class="form-control" name="password" id="password" th:value=*{password} required>
+            <label for="userZone">Time zone</label>
+            <select class="form-control" id="userZone" name="userZone">
+              <option th:each="timeZone : ${availableZones}" th:value="${timeZone}" th:text="${timeZone}" th:selected="${timeZone} == *{userZone}"></option>
             </select>
-            <input type="hidden" name="id" value="0"/>
+            <button type="submit" class="btn btn-secondary">Edit</button>
           </div>
-          <button type="submit" class="btn btn-secondary">Sign up</button>
         </form>
       </div>
     </div>

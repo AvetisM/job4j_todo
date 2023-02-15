@@ -8,6 +8,7 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.Store;
 
 import javax.transaction.Transactional;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -34,6 +35,7 @@ public class TaskDBService implements TaskService {
         return taskStore.add(task);
     }
 
+    @Transactional
     public boolean update(Task task, int priorityId, String[] categoryIdArray) {
         Optional<Priority> priorityOptional = priorityService.findById(priorityId);
         if (priorityOptional.isEmpty()) {
@@ -54,7 +56,13 @@ public class TaskDBService implements TaskService {
     }
 
     public List<Task> findAll() {
-        return taskStore.findAll();
+        List<Task> tasks = taskStore.findAll();
+        for (Task task : tasks) {
+            String userZone = task.getUser().getUserZone();
+            task.setCreated(task.getCreated().atZone(ZoneId.of(userZone))
+                   .withZoneSameInstant(ZoneId.of(userZone)).toLocalDateTime());
+        }
+        return tasks;
     }
 
     public Optional<Task> findById(int id) {

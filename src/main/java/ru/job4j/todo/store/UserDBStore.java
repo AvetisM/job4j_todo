@@ -30,6 +30,16 @@ public class UserDBStore {
         }
     }
 
+    public boolean update(User user) {
+        try {
+            crudRepository.run(session -> session.merge(user));
+            return true;
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return false;
+        }
+    }
+
     public Optional<User> findByLoginAndPassword(String login, String password) {
         try {
             return crudRepository.optional(

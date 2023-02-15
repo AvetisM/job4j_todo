@@ -22,7 +22,8 @@ public class TaskDBStore implements Store {
                     + "SET done = true "
                     + "WHERE id = :fId";
     private static final String DELETE_TASK = "DELETE Task WHERE id = :fId";
-    private static final String FIND_ALL_TASKS = "FROM Task as t JOIN FETCH t.priority";
+    private static final String FIND_ALL_TASKS =
+            "FROM Task as t JOIN FETCH t.priority JOIN FETCH t.user";
     private static final String FIND_TASK_BY_ID =
             "FROM Task as t JOIN FETCH t.priority JOIN FETCH t.categories WHERE t.id = :fId";
     private static final String FIND_TASK_BY_DONE =
