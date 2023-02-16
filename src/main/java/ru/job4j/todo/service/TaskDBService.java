@@ -8,7 +8,6 @@ import ru.job4j.todo.model.Task;
 import ru.job4j.todo.store.Store;
 
 import javax.transaction.Transactional;
-import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -18,6 +17,7 @@ public class TaskDBService implements TaskService {
     private final Store taskStore;
     private final PriorityService priorityService;
     private final CategoryService categoryService;
+    private final TimeZoneService timeZoneService;
 
     @Transactional
     public boolean add(Task task, int priorityId, String[] categoryIdArray) {
@@ -26,7 +26,7 @@ public class TaskDBService implements TaskService {
             return false;
         }
         Integer[] categoryIdIntArray = Arrays.stream(categoryIdArray)
-                .mapToInt(Integer ::parseInt)
+                .mapToInt(Integer::parseInt)
                 .boxed()
                 .toArray(Integer[]::new);
         List<Category> categories = categoryService.getCategoryListByIdArray(categoryIdIntArray);
@@ -42,7 +42,7 @@ public class TaskDBService implements TaskService {
             return false;
         }
         Integer[] categoryIdIntArray = Arrays.stream(categoryIdArray)
-                .mapToInt(Integer ::parseInt)
+                .mapToInt(Integer::parseInt)
                 .boxed()
                 .toArray(Integer[]::new);
         List<Category> categories = categoryService.getCategoryListByIdArray(categoryIdIntArray);
@@ -58,9 +58,8 @@ public class TaskDBService implements TaskService {
     public List<Task> findAll() {
         List<Task> tasks = taskStore.findAll();
         for (Task task : tasks) {
-            String userZone = task.getUser().getUserZone();
-            task.setCreated(task.getCreated().atZone(ZoneId.of(userZone))
-                   .withZoneSameInstant(ZoneId.of(userZone)).toLocalDateTime());
+            task.setCreated(timeZoneService.getDateWithTimeZone(task.getCreated(),
+                    task.getUser().getUserZone()));
         }
         return tasks;
     }
