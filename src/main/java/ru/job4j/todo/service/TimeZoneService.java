@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -19,7 +20,12 @@ public class TimeZoneService {
     }
 
     public LocalDateTime getDateWithTimeZone(LocalDateTime date,  String zoneId) {
-        return date.atZone(ZoneId.of(zoneId))
+        return ZonedDateTime
+                .of(date, ZoneId.of(TimeZone.getDefault().getID()))
                 .withZoneSameInstant(ZoneId.of(zoneId)).toLocalDateTime();
+    }
+
+    public String getZoneIdOrDefault(String timeZoneId) {
+        return "".equals(timeZoneId) ? TimeZone.getDefault().getID() : timeZoneId;
     }
 }
